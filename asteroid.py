@@ -3,7 +3,7 @@ from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProper
 from kivy.vector import Vector
 
 class SpaceAsteroid(Widget):
-
+    #test
     velocity_x =NumericProperty(0)
     velocity_y =NumericProperty(0)
     velocity = ReferenceListProperty(velocity_x, velocity_y)
