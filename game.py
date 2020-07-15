@@ -3,7 +3,6 @@ from kivy.uix.label import Label
 from kivy.properties import NumericProperty, StringProperty, ObjectProperty
 from kivy.vector import Vector
 from kivy.clock import Clock
-from kivy.uix.button import Button
 from ship import SpaceShip
 from asteroid import SpaceAsteroid
 from random import randint
@@ -16,7 +15,7 @@ class SpaceGame(Widget):
     asteroid = ObjectProperty(None)
     laser = ObjectProperty(None)
     alien = ObjectProperty(None)
-    message = StringProperty("")
+    message = StringProperty("TOUCH HERE TO START")
     score = NumericProperty(0)
     laser_list = []
     asteroid_list = []
@@ -133,7 +132,7 @@ class SpaceGame(Widget):
     #game over procedure
     def game_over(self):
         print ("Game Over")
-        self.message = "TOUCH ANYWHERE TO START"
+        self.message = "TOUCH HERE TO START"
         for x in self.asteroid_list:
             self.remove_widget(x)
 
@@ -152,7 +151,7 @@ class SpaceGame(Widget):
 
     #starts game-- will eventually be game menu
     def start(self):
-        self.message = "TOUCH ANYWHERE TO START"
+        self.message = ""
         Clock.schedule_interval(self.add_alien, 5)
         Clock.schedule_interval(self.add_asteroid, 3)
         Clock.schedule_interval(self.update, 1.0/60.0)
