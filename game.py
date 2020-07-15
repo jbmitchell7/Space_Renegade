@@ -1,5 +1,6 @@
 from kivy.uix.widget import Widget
-from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty
+from kivy.uix.label import Label
+from kivy.properties import NumericProperty, StringProperty, ObjectProperty
 from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.uix.button import Button
@@ -15,12 +16,11 @@ class SpaceGame(Widget):
     asteroid = ObjectProperty(None)
     laser = ObjectProperty(None)
     alien = ObjectProperty(None)
-
+    message = StringProperty("")
     score = NumericProperty(0)
     laser_list = []
     asteroid_list = []
     alien_list = []
-    start = Button(text='Play', font_size=40, size_hint=(.90, .10))
 
     #Generates asteroids
     def add_asteroid(self, dt):
@@ -54,12 +54,10 @@ class SpaceGame(Widget):
 
     #Game Loop
     def update(self, dt):
-        # self.remove_widget(self.start)
         self.ship.move()
 
         #Collision Handler for hitting edge
         if (self.ship.right <= 30) or (self.ship.right > self.width):
-            #self.game_over()
             self.ship.velocity_x = 0
 
         #collision handler for aliens on edge
@@ -87,7 +85,6 @@ class SpaceGame(Widget):
             #removes widget when off screen
             if z.y < 0:
                 self.remove_widget(t)
-                #self.game_over()
 
         #iterates through each current laser
         for l in self.laser_list:
@@ -136,7 +133,7 @@ class SpaceGame(Widget):
     #game over procedure
     def game_over(self):
         print ("Game Over")
-
+        self.message = "TOUCH ANYWHERE TO START"
         for x in self.asteroid_list:
             self.remove_widget(x)
 
@@ -152,10 +149,10 @@ class SpaceGame(Widget):
         Clock.unschedule(self.add_asteroid)
         Clock.unschedule(self.add_alien)
         Clock.unschedule(self.update)
-        self.add_widget(self.start)
 
     #starts game-- will eventually be game menu
-    def menu(self):
+    def start(self):
+        self.message = "TOUCH ANYWHERE TO START"
         Clock.schedule_interval(self.add_alien, 5)
         Clock.schedule_interval(self.add_asteroid, 3)
         Clock.schedule_interval(self.update, 1.0/60.0)

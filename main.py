@@ -5,7 +5,7 @@ from game import SpaceGame
 class SpaceApp(App):
     def build(self):
         game = SpaceGame()
-        game.menu()
+        game.start()
 
         return game
 
