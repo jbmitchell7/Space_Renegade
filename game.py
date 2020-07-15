@@ -54,7 +54,7 @@ class SpaceGame(Widget):
 
     #Game Loop
     def update(self, dt):
-        # self.remove_widget(self.button)
+        # self.remove_widget(self.start)
         self.ship.move()
 
         #Collision Handler for hitting edge
@@ -152,7 +152,7 @@ class SpaceGame(Widget):
         Clock.unschedule(self.add_asteroid)
         Clock.unschedule(self.add_alien)
         Clock.unschedule(self.update)
-        self.add_widget(self.button)
+        self.add_widget(self.start)
 
     #starts game-- will eventually be game menu
     def menu(self):
