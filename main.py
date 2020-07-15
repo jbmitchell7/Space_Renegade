@@ -6,7 +6,6 @@ from kivy.uix.button import Button
 class SpaceApp(App):
     def build(self):
         game = SpaceGame()
-        #test
         startgame = Button(
                 font_size = (game.height / 20),
                 width = (game.width / 2),
