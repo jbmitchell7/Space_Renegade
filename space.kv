@@ -49,14 +49,11 @@
         top: root.height / 5
         text: str(root.score)
 
-    # Button:
-    #     font_size: root.height / 20
-    #     width: self.texture_size[0] + dp(5)
-    #     height: self.texture_size[1] + dp(5)
-    #     center_x: root.width / 3.3
-    #     top: root.height / 2
-    #     text: str(root.message)
-    #     background_color: 0, 0, 0, 0
+    Label:
+        font_size: root.height / 15
+        center_x: root.width / 2
+        top: root.height / 2
+        text: str(root.message)
 
     SpaceShip:
         id: game_ship
