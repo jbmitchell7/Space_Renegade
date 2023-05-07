@@ -4,11 +4,11 @@ from kivy.properties import NumericProperty, StringProperty, ObjectProperty
 from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.uix.button import Button
-from ship import SpaceShip
-from asteroid import SpaceAsteroid
 from random import randint
-from laser import SpaceLaser
-from alien import SpaceAlien
+from components.ship import SpaceShip
+from components.asteroid import SpaceAsteroid
+from components.laser import SpaceLaser
+from components.alien import SpaceAlien
 
 
 class SpaceGame(Widget):
@@ -24,33 +24,33 @@ class SpaceGame(Widget):
 
     #Generates asteroids
     def add_asteroid(self, dt):
-        tmp_asteroid = SpaceAsteroid()
-        tmp_asteroid.x = randint(self.width / 20, 4 * self.width / 5)
-        tmp_asteroid.y = self.height
-        tmp_asteroid.velocity_y = -2
-        tmp_asteroid.velocity_x = 0
-        self.asteroid_list.append(tmp_asteroid)
-        self.add_widget(tmp_asteroid)
+        new_asteroid = SpaceAsteroid()
+        new_asteroid.x = randint(self.width / 20, 4 * self.width / 5)
+        new_asteroid.y = self.height
+        new_asteroid.velocity_y = -2
+        new_asteroid.velocity_x = 0
+        self.asteroid_list.append(new_asteroid)
+        self.add_widget(new_asteroid)
 
     #Generates aliens
     def add_alien(self, dt):
-        tmp_alien = SpaceAlien()
-        tmp_alien.x = randint(self.width / 20, 4 * self.width / 5)
-        tmp_alien.y = self.height
-        tmp_alien.velocity_y = -1
-        tmp_alien.velocity_x = 2
-        self.alien_list.append(tmp_alien)
-        self.add_widget(tmp_alien)
+        new_alien = SpaceAlien()
+        new_alien.x = randint(self.width / 20, 4 * self.width / 5)
+        new_alien.y = self.height
+        new_alien.velocity_y = -1
+        new_alien.velocity_x = 2
+        self.alien_list.append(new_alien)
+        self.add_widget(new_alien)
 
     #Generates lasers
     def add_laser(self):
-        tmp_laser = SpaceLaser()
-        tmp_laser.x = self.ship.x + self.ship.width / 2
-        tmp_laser.y = self.ship.y
-        tmp_laser.velocity_y = 5
-        tmp_laser.velocity_x = 0
-        self.laser_list.append(tmp_laser)
-        self.add_widget(tmp_laser)
+        new_laser = SpaceLaser()
+        new_laser.x = self.ship.x + self.ship.width / 2
+        new_laser.y = self.ship.y
+        new_laser.velocity_y = 5
+        new_laser.velocity_x = 0
+        self.laser_list.append(new_laser)
+        self.add_widget(new_laser)
 
     #Game Loop
     def update(self, dt):
@@ -60,66 +60,54 @@ class SpaceGame(Widget):
         if (self.ship.right <= 30) or (self.ship.right > self.width):
             self.ship.velocity_x = 0
 
-        #collision handler for aliens on edge
-        for u in self.alien_list:
-            if (u.x <= 50) or (u.x >= self.width - 50):
-                u.velocity_x = u.velocity_x * -1
-
-        #iterates through each current asteroid
-        for t in self.asteroid_list:
-            t.move()
+        for alien in self.alien_list:
+            alien.move()
             #stops everything on collision
-            if t.collide_widget(self.ship):
-                self.game_over()
-                print ("asteroid collision")
-            #removes widget when off screen
-            if t.y < 0:
-                self.remove_widget(t)
-
-        for z in self.alien_list:
-            z.move()
-            #stops everything on collision
-            if z.collide_widget(self.ship):
+            if alien.collide_widget(self.ship):
                 self.game_over()
                 print ("alien collision")
             #removes widget when off screen
-            if z.y < 0:
-                self.remove_widget(t)
+            if alien.y < 0:
+                self.alien_list.remove(alien)
+                self.remove_widget(alien)
+            #collision handler for aliens on edge
+            if (alien.x <= 50) or (alien.x >= self.width - 50):
+                alien.velocity_x = alien.velocity_x * -1
+
+        #iterates through each current asteroid
+        for a in self.asteroid_list:
+            a.move()
+            #stops everything on collision
+            if a.collide_widget(self.ship):
+                self.game_over()
+                print ("asteroid collision")
+            #removes widget when off screen
+            if a.y < 0:
+                self.asteroid_list.remove(a)
+                self.remove_widget(a)
 
         #iterates through each current laser
         for l in self.laser_list:
             l.move()
+            #checks if laser has missed and is now off screen
+            if l.y > self.height:
+                self.laser_list.remove(l)
+                self.remove_widget(l)
+
             for a in self.asteroid_list:
                 #checks laser-asteroid collisions
                 if l.collide_widget(a):
-                    l.y = 0
+                    self.laser_list.remove(l)
                     self.remove_widget(l)
 
             for v in self.alien_list:
                 #checks laser alien collisions
                 if l.collide_widget(v):
                     self.score += 1
+                    self.laser_list.remove(l)
+                    self.alien_list.remove(v)
                     self.remove_widget(v)
                     self.remove_widget(l)
-                    v.y = self.height
-                    v.velocity_y = 0
-                    l.y = 0
-
-
-        #sets current list of lasers on screen
-        tmp_laserlist = self.laser_list
-        tmp_laserlist[:] = [x for x in tmp_laserlist if (x.y > -100)]
-        self.laser_list = tmp_laserlist
-
-        #sets current list of asteroid on screen
-        tmp_asteroidlist = self.asteroid_list
-        tmp_asteroidlist[:] = [x for x in tmp_asteroidlist if (x.y > -100)]
-        self.asteroid_list = tmp_asteroidlist
-
-        #sets current list of aliens on screen
-        tmp_alienlist = self.alien_list
-        tmp_alienlist[:] = [x for x in tmp_alienlist if (x.y > -100)]
-        self.alien_list = tmp_alienlist
 
     #handler for touch instances
     def on_touch_down(self, touch):
@@ -144,7 +132,7 @@ class SpaceGame(Widget):
         self.alien_list = []
         self.laser_list = []
         self.ship.xpos = self.width / 2
-        self.ship.ypos = self. height / 2
+        self.ship.ypos = self.height / 2
         self.score = 0
         Clock.unschedule(self.add_asteroid)
         Clock.unschedule(self.add_alien)

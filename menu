@@ -49,22 +49,22 @@ def buildUp(self):
 
         def __init__(self, **kwargs):
             super(SmartStartMenu, self).__init__(**kwargs)
-           self.layout = BoxLayout(orientation = 'vertical')
-           self.layout.width = Window.width/2
-           self.layout.height = Window.height/2
-           self.layout.x = Window.width/2 - self.layout.width/2
-           self.layout.y = Window.height/2 - self.layout.height/2
-           self.add_widget(self.layout)
+            self.layout = BoxLayout(orientation = 'vertical')
+            self.layout.width = Window.width/2
+            self.layout.height = Window.height/2
+            self.layout.x = Window.width/2 - self.layout.width/2
+            self.layout.y = Window.height/2 - self.layout.height/2
+            self.add_widget(self.layout)
 
-           self.msg = Label(text = 'Flappy Ship')
-           self.msg.font_size = Window.width*0.07
-           self.msg.pos = (Window.width*0.45,Window.height*0.75)
-           self.add_widget(self.msg)
-           self.img = Image(source = 'lens2.png')
-           self.img.size = (Window.width*1.5,Window.height*1.5)
-           self.img.pos = (-Window.width*0.2,-Window.height*0.2)
-           self.img.opacity = 0.35
-           self.add_widget(self.img)
+            self.msg = Label(text = 'Flappy Ship')
+            self.msg.font_size = Window.width*0.07
+            self.msg.pos = (Window.width*0.45,Window.height*0.75)
+            self.add_widget(self.msg)
+            self.img = Image(source = 'lens2.png')
+            self.img.size = (Window.width*1.5,Window.height*1.5)
+            self.img.pos = (-Window.width*0.2,-Window.height*0.2)
+            self.img.opacity = 0.35
+            self.add_widget(self.img)
 
     class WidgetDrawer(Widget):
     #This widget is used to draw all of the objects on the screen
