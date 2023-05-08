@@ -12,45 +12,24 @@ from components.alien import SpaceAlien
 
 
 class SpaceGame(Widget):
+    in_menu = True
     ship = ObjectProperty(None)
     asteroid = ObjectProperty(None)
     laser = ObjectProperty(None)
     alien = ObjectProperty(None)
-    message = StringProperty("")
+    message = StringProperty("TOUCH ANYWHERE TO START")
     score = NumericProperty(0)
     laser_list = []
     asteroid_list = []
     alien_list = []
 
-    #Generates asteroids
-    def add_asteroid(self, dt):
-        new_asteroid = SpaceAsteroid()
-        new_asteroid.x = randint(self.width / 20, 4 * self.width / 5)
-        new_asteroid.y = self.height
-        new_asteroid.velocity_y = -2
-        new_asteroid.velocity_x = 0
-        self.asteroid_list.append(new_asteroid)
-        self.add_widget(new_asteroid)
-
-    #Generates aliens
-    def add_alien(self, dt):
-        new_alien = SpaceAlien()
-        new_alien.x = randint(self.width / 20, 4 * self.width / 5)
-        new_alien.y = self.height
-        new_alien.velocity_y = -1
-        new_alien.velocity_x = 2
-        self.alien_list.append(new_alien)
-        self.add_widget(new_alien)
-
-    #Generates lasers
-    def add_laser(self):
-        new_laser = SpaceLaser()
-        new_laser.x = self.ship.x + self.ship.width / 2
-        new_laser.y = self.ship.y
-        new_laser.velocity_y = 5
-        new_laser.velocity_x = 0
-        self.laser_list.append(new_laser)
-        self.add_widget(new_laser)
+    #starts game-- will eventually be game menu
+    def start(self):
+        if not self.in_menu:
+            self.message = ""
+            Clock.schedule_interval(self.add_alien, 5)
+            Clock.schedule_interval(self.add_asteroid, 3)
+            Clock.schedule_interval(self.update, 1.0/60.0)
 
     #Game Loop
     def update(self, dt):
@@ -109,24 +88,15 @@ class SpaceGame(Widget):
                     self.remove_widget(v)
                     self.remove_widget(l)
 
-    #handler for touch instances
-    def on_touch_down(self, touch):
-        if touch.x < self.width / 3:
-            self.ship.velocity = Vector (-3, 0)
-        elif touch.x > (self.width * 2) / 3:
-            self.ship.velocity = Vector (3, 0)
-        elif touch.x >= self.width / 3 and touch.x <= (self.width*2) / 3:
-            self.add_laser()
-
     #game over procedure
     def game_over(self):
         print ("Game Over")
         self.message = "TOUCH ANYWHERE TO START"
-        for x in self.asteroid_list:
-            self.remove_widget(x)
+        for a in self.asteroid_list:
+            self.remove_widget(a)
 
-        for n in self.alien_list:
-            self.remove_widget(n)
+        for alien in self.alien_list:
+            self.remove_widget(alien)
 
         self.asteroidList = []
         self.alien_list = []
@@ -134,13 +104,49 @@ class SpaceGame(Widget):
         self.ship.xpos = self.width / 2
         self.ship.ypos = self.height / 2
         self.score = 0
+        self.in_menu = True
         Clock.unschedule(self.add_asteroid)
         Clock.unschedule(self.add_alien)
         Clock.unschedule(self.update)
 
-    #starts game-- will eventually be game menu
-    def start(self):
-        self.message = "TOUCH ANYWHERE TO START"
-        Clock.schedule_interval(self.add_alien, 5)
-        Clock.schedule_interval(self.add_asteroid, 3)
-        Clock.schedule_interval(self.update, 1.0/60.0)
+    #handler for touch instances
+    def on_touch_down(self, touch):
+        if self.in_menu:
+            self.in_menu = False
+            self.start()
+        elif touch.x < self.width / 3:
+            self.ship.velocity = Vector (-3, 0)
+        elif touch.x > (self.width * 2) / 3:
+            self.ship.velocity = Vector (3, 0)
+        elif touch.x >= self.width / 3 and touch.x <= (self.width*2) / 3:
+            self.add_laser()
+
+    #Generates asteroids
+    def add_asteroid(self, dt):
+        new_asteroid = SpaceAsteroid()
+        new_asteroid.x = randint(self.width / 20, 4 * self.width / 5)
+        new_asteroid.y = self.height
+        new_asteroid.velocity_y = -2
+        new_asteroid.velocity_x = 0
+        self.asteroid_list.append(new_asteroid)
+        self.add_widget(new_asteroid)
+
+    #Generates aliens
+    def add_alien(self, dt):
+        new_alien = SpaceAlien()
+        new_alien.x = randint(self.width / 20, 4 * self.width / 5)
+        new_alien.y = self.height
+        new_alien.velocity_y = -1
+        new_alien.velocity_x = 2
+        self.alien_list.append(new_alien)
+        self.add_widget(new_alien)
+
+    #Generates lasers
+    def add_laser(self):
+        new_laser = SpaceLaser()
+        new_laser.x = self.ship.x + self.ship.width / 2
+        new_laser.y = self.ship.y
+        new_laser.velocity_y = 5
+        new_laser.velocity_x = 0
+        self.laser_list.append(new_laser)
+        self.add_widget(new_laser)
