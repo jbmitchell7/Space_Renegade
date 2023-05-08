@@ -1,9 +1,7 @@
 from kivy.uix.widget import Widget
-from kivy.uix.label import Label
-from kivy.properties import NumericProperty, StringProperty, ObjectProperty
+from kivy.properties import NumericProperty, StringProperty
 from kivy.vector import Vector
 from kivy.clock import Clock
-from kivy.uix.button import Button
 from random import randint
 from components.ship import SpaceShip
 from components.asteroid import SpaceAsteroid
@@ -13,10 +11,7 @@ from components.alien import SpaceAlien
 
 class SpaceGame(Widget):
     in_menu = True
-    ship = ObjectProperty(None)
-    asteroid = ObjectProperty(None)
-    laser = ObjectProperty(None)
-    alien = ObjectProperty(None)
+    ship = SpaceShip()
     message = StringProperty("TOUCH ANYWHERE TO START")
     score = NumericProperty(0)
     laser_list = []
@@ -25,11 +20,11 @@ class SpaceGame(Widget):
 
     #starts game-- will eventually be game menu
     def start(self):
-        if not self.in_menu:
-            self.message = ""
-            Clock.schedule_interval(self.add_alien, 5)
-            Clock.schedule_interval(self.add_asteroid, 3)
-            Clock.schedule_interval(self.update, 1.0/60.0)
+        print ('Game Started')
+        self.message = ""
+        Clock.schedule_interval(self.add_alien, 5)
+        Clock.schedule_interval(self.add_asteroid, 3)
+        Clock.schedule_interval(self.update, 1.0/60.0)
 
     #Game Loop
     def update(self, dt):
@@ -43,8 +38,9 @@ class SpaceGame(Widget):
             alien.move()
             #stops everything on collision
             if alien.collide_widget(self.ship):
-                self.game_over()
                 print ("alien collision")
+                self.game_over()
+                return
             #removes widget when off screen
             if alien.y < 0:
                 self.alien_list.remove(alien)
@@ -58,8 +54,9 @@ class SpaceGame(Widget):
             a.move()
             #stops everything on collision
             if a.collide_widget(self.ship):
-                self.game_over()
                 print ("asteroid collision")
+                self.game_over()
+                return
             #removes widget when off screen
             if a.y < 0:
                 self.asteroid_list.remove(a)
@@ -79,35 +76,33 @@ class SpaceGame(Widget):
                     self.laser_list.remove(l)
                     self.remove_widget(l)
 
-            for v in self.alien_list:
+            for alien in self.alien_list:
                 #checks laser alien collisions
-                if l.collide_widget(v):
+                if l.collide_widget(alien):
                     self.score += 1
                     self.laser_list.remove(l)
-                    self.alien_list.remove(v)
-                    self.remove_widget(v)
+                    self.alien_list.remove(alien)
+                    self.remove_widget(alien)
                     self.remove_widget(l)
 
     #game over procedure
     def game_over(self):
         print ("Game Over")
-        self.message = "TOUCH ANYWHERE TO START"
+        Clock.unschedule(self.add_asteroid)
+        Clock.unschedule(self.add_alien)
+        Clock.unschedule(self.update)
         for a in self.asteroid_list:
             self.remove_widget(a)
 
         for alien in self.alien_list:
             self.remove_widget(alien)
 
-        self.asteroidList = []
+        self.asteroid_list = []
         self.alien_list = []
         self.laser_list = []
-        self.ship.xpos = self.width / 2
-        self.ship.ypos = self.height / 2
         self.score = 0
+        self.message = "TOUCH ANYWHERE TO START"
         self.in_menu = True
-        Clock.unschedule(self.add_asteroid)
-        Clock.unschedule(self.add_alien)
-        Clock.unschedule(self.update)
 
     #handler for touch instances
     def on_touch_down(self, touch):
